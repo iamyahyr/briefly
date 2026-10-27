@@ -1,14 +1,14 @@
 # syntax=docker/dockerfile:1
 
 # ─── Dependencies ──────────────────────────────────────────────────────
-FROM node:24-alpine AS deps
+FROM node:26-alpine AS deps
 RUN corepack enable
 WORKDIR /app
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
 # ─── Build ─────────────────────────────────────────────────────────────
-FROM node:24-alpine AS build
+FROM node:26-alpine AS build
 RUN corepack enable
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1 \
@@ -18,7 +18,7 @@ COPY . .
 RUN pnpm build
 
 # ─── Runtime ───────────────────────────────────────────────────────────
-FROM node:24-alpine AS runner
+FROM node:26-alpine AS runner
 WORKDIR /app
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
