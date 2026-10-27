@@ -1,0 +1,36 @@
+import path from "node:path";
+import { defineConfig } from "vitest/config";
+
+export default defineConfig({
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "src"),
+      // `server-only` throws outside React Server Components; tests run in plain Node.
+      "server-only": path.resolve(__dirname, "tests/stubs/empty.ts"),
+    },
+  },
+  test: {
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          include: ["tests/unit/**/*.test.ts"],
+          setupFiles: ["tests/unit/setup.ts"],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "integration",
+          include: ["tests/integration/**/*.test.ts"],
+          globalSetup: ["tests/integration/global-setup.ts"],
+          setupFiles: ["tests/integration/setup.ts"],
+          fileParallelism: false,
+          testTimeout: 20_000,
+          hookTimeout: 30_000,
+        },
+      },
+    ],
+  },
+});
