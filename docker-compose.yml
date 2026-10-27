@@ -1,6 +1,6 @@
 # Briefly — self-hosted stack.
 #
-#   cp .env.example .env   # then set BETTER_AUTH_SECRET
+#   cp .env.example .env   # then set BETTER_AUTH_SECRET and APP_URL
 #   docker compose up -d
 #
 # For local development you only need the database:
@@ -26,9 +26,8 @@ services:
 
   app:
     build: .
-    image: ghcr.io/yahirortega/briefly:latest
+    image: ghcr.io/iamyahyr/briefly:latest
     restart: unless-stopped
-    profiles: ["app"]
     depends_on:
       db:
         condition: service_healthy

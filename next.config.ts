@@ -11,7 +11,8 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // The Docker image sets NEXT_OUTPUT=standalone; `next start` needs the default output.
+  output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
   // Almost every page in Briefly is per-user and dynamic, so we use the
   // classic request-time rendering model instead of Cache Components.
   // See docs/architecture.md.
