@@ -114,7 +114,12 @@ export function isEmptyValue(value: unknown): boolean {
 export function fieldSchema(field: AnswerField, mode: ValidationMode): z.ZodType {
   const schema = baseSchema(field, mode).optional();
   if (mode === "submit" && field.required) {
-    return schema.refine((v) => !isEmptyValue(v), "required");
+    // Not `.optional().refine()`: object schemas skip optional keys that are
+    // missing, so a required answer that was never saved would pass.
+    return z
+      .unknown()
+      .refine((v) => !isEmptyValue(v), "required")
+      .pipe(schema);
   }
   return schema;
 }

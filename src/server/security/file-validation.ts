@@ -16,12 +16,25 @@ export const KIND_MIME_TYPES: Record<FileKind, Record<string, string>> = {
 
 export const RASTER_IMAGE_TYPES = new Set(Object.keys(KIND_MIME_TYPES.image));
 
+/** Keep only safe printable characters of the original name; it is metadata, never a path. */
+export function sanitizeFileName(name: string): string {
+  const cleaned = name
+    .normalize("NFC")
+    .replace(/[\u0000-\u001f\u007f/\\]/g, "")
+    .trim()
+    .slice(-150);
+  return cleaned || "file";
+}
+
 export type FileCheck =
   | { ok: true; mime: string; ext: string }
   | { ok: false; error: "file_type" | "file_too_large" | "file_empty" };
 
 function looksLikeSvg(buffer: Buffer): boolean {
-  const head = buffer.subarray(0, 4096).toString("utf8").replace(/^﻿/, "");
+  const head = buffer
+    .subarray(0, 4096)
+    .toString("utf8")
+    .replace(/^\uFEFF/, "");
   // Optional XML declaration, comments and doctype before the root <svg> element.
   return /^\s*(<\?xml[^>]*>\s*)?(<!--[\s\S]*?-->\s*)*(<!DOCTYPE svg[^>]*>\s*)?(<!--[\s\S]*?-->\s*)*<svg[\s>]/i.test(
     head,

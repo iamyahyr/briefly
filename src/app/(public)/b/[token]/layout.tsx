@@ -25,7 +25,7 @@ export default async function PublicBriefLayout({ children, params }: LayoutProp
   return (
     <html lang={locale} className={fontClassName} suppressHydrationWarning>
       <body className="flex min-h-full flex-col">
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages} timeZone="UTC">
           <Providers>{children}</Providers>
         </NextIntlClientProvider>
       </body>

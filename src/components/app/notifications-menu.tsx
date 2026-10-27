@@ -2,7 +2,7 @@
 
 import { Bell } from "lucide-react";
 import Link from "next/link";
-import { useFormatter, useTranslations } from "next-intl";
+import { useFormatter, useNow, useTranslations } from "next-intl";
 import { useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -21,6 +21,7 @@ type Item = {
 export function NotificationsMenu({ unread, items }: { unread: number; items: Item[] }) {
   const t = useTranslations("nav");
   const format = useFormatter();
+  const now = useNow({ updateInterval: 60_000 });
   const [pending, startTransition] = useTransition();
 
   return (
@@ -76,7 +77,7 @@ export function NotificationsMenu({ unread, items }: { unread: number; items: It
                       {t("briefSubmitted", { client: item.clientName, title: item.briefTitle })}
                     </span>
                     <span className="text-xs text-muted-foreground">
-                      {format.relativeTime(new Date(item.createdAt))}
+                      {format.relativeTime(new Date(item.createdAt), now)}
                     </span>
                   </span>
                 </Link>

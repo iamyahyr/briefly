@@ -5,7 +5,7 @@ import sharp from "sharp";
 import { db } from "@/server/db";
 import { uploads } from "@/server/db/schema";
 import { env } from "@/server/env";
-import { checkFile, RASTER_IMAGE_TYPES } from "@/server/security/file-validation";
+import { checkFile, RASTER_IMAGE_TYPES, sanitizeFileName } from "@/server/security/file-validation";
 import { deleteObjects, storage } from "@/server/storage";
 import type { FileKind } from "@/templates/types";
 import { DomainError, notFound } from "./errors";
@@ -20,16 +20,6 @@ export type UploadMeta = {
 };
 
 const MB = 1024 * 1024;
-
-/** Keep only safe printable characters of the original name; it is metadata, never a path. */
-export function sanitizeFileName(name: string): string {
-  const cleaned = name
-    .normalize("NFC")
-    .replace(/[\u0000-\u001f\u007f/\\]/g, "")
-    .trim()
-    .slice(-150);
-  return cleaned || "file";
-}
 
 /**
  * Re-encodes raster images: applies EXIF rotation, strips metadata (GPS etc.)
